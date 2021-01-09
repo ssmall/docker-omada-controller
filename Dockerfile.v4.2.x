@@ -6,12 +6,21 @@ ARG OMADA_VER=4.2.8
 ARG OMADA_TAR="Omada_SDN_Controller_v${OMADA_VER}_linux_x64.tar.gz"
 ARG OMADA_URL="https://static.tp-link.com/2020/202012/20201211/${OMADA_TAR}"
 
+# Install mongodb
+RUN apt-get update &&\
+    apt-get install --no-install-recommends -y gnupg wget ca-certificates &&\
+    rm -rf /var/lib/apt/lists/*
+RUN wget --no-check-certificate -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -
+RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+RUN apt-get update &&\
+    apt-get install --no-install-recommends -y mongodb-org &&\
+    rm -rf /var/lib/apt/lists/*
+
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
   echo "**** Install Dependencies ****" &&\
-  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list &&\
   apt-get update &&\
-  apt-get install --no-install-recommends -y gosu mongodb-org net-tools openjdk-8-jre-headless tzdata wget &&\
+  apt-get install --no-install-recommends -y gosu net-tools openjdk-8-jre-headless tzdata &&\
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
