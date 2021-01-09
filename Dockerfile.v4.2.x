@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -9,8 +9,9 @@ ARG OMADA_URL="https://static.tp-link.com/2020/202012/20201211/${OMADA_TAR}"
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN \
   echo "**** Install Dependencies ****" &&\
+  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.4.list &&\
   apt-get update &&\
-  apt-get install --no-install-recommends -y gosu mongodb-server-core net-tools openjdk-8-jre-headless tzdata wget &&\
+  apt-get install --no-install-recommends -y gosu mongodb-org net-tools openjdk-8-jre-headless tzdata wget &&\
   rm -rf /var/lib/apt/lists/* &&\
   echo "**** Download Omada Controller ****" &&\
   cd /tmp &&\
